@@ -1,5 +1,9 @@
 // Canvas Components
 export { TimingCanvas } from './TimingCanvas';
+export { TimeGrid } from './TimeGrid';
+export { TimingCanvasWithGrid } from './TimingCanvasWithGrid';
+export { SignalRenderer } from './SignalRenderer';
+export { TimingDiagramDemo } from './TimingDiagramDemo';
 
 // Hooks
 export { useCanvasTransforms } from '../hooks/useCanvasTransforms';
@@ -14,4 +18,8 @@ export type {
   CanvasTransforms,
   CanvasState,
   MouseEventHandler,
+  TimeGridProps,
+  TimeUnit,
+  GridTick,
+  GridConfig,
 } from '../types/canvas'; 

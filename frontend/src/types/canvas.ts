@@ -48,4 +48,30 @@ export interface CanvasState {
   };
 }
 
-export type MouseEventHandler = (event: React.MouseEvent, logicalCoords: LogicalCoordinates) => void; 
+export type MouseEventHandler = (event: React.MouseEvent, logicalCoords: LogicalCoordinates) => void;
+
+// Time Grid Types
+export type TimeUnit = 'ns' | 'μs' | 'cycles';
+
+export interface TimeGridProps {
+  width: number;
+  height: number;
+  timeUnit: TimeUnit;
+  startTime: number;
+  endTime: number;
+  canvasTransforms: CanvasTransforms;
+}
+
+export interface GridTick {
+  position: number; // x coordinate
+  time: number; // actual time value
+  isMajor: boolean;
+  label?: string;
+}
+
+export interface GridConfig {
+  majorTickInterval: number;
+  minorTickInterval: number;
+  majorTicks: GridTick[];
+  minorTicks: GridTick[];
+} 
