@@ -1,0 +1,162 @@
+---
+description: This rule describes the exact Task Breakdown on Sprint 1, for both Frontend and Backend
+globs: 
+alwaysApply: false
+---
+# Sprint 1 Task Breakdown: Foundation & Basic Canvas
+
+## Frontend Tasks
+
+### F1.1: Project Setup & Dependencies (4-6 hours)
+**What**: Initialize React + TypeScript project with essential libraries
+**Why**: Establishes the development foundation with proper tooling
+**Tasks**:
+- Create React app with TypeScript template
+- Install D3.js, Canvas/SVG libraries, testing frameworks
+- Configure ESLint, Prettier, and TypeScript strict mode
+- Set up folder structure (`/components`, `/hooks`, `/types`, `/utils`)
+**Deliverable**: Runnable development environment
+
+### F1.2: Core Canvas Component (8-10 hours)
+**What**: Build the main drawing surface with proper coordinate system
+**Why**: This is the foundation where all timing diagrams will be rendered
+**Tasks**:
+- Create `TimingCanvas` component with SVG or Canvas element
+- Implement coordinate transformation (time → pixels, signal → Y position)
+- Set up viewport management (canvas dimensions, scroll bounds)
+- Add basic mouse event handling structure
+**Deliverable**: Blank canvas that responds to window resizing
+
+### F1.3: Time Grid Rendering System (6-8 hours)
+**What**: Draw time scale with major/minor tick marks and labels
+**Why**: Users need visual time reference to understand signal timing
+**Tasks**:
+- Calculate optimal tick spacing based on zoom level
+- Render vertical grid lines (major = thick, minor = thin)
+- Add time labels at bottom (with unit selection: ns, μs, cycles)
+- Implement dynamic grid density (fewer ticks when zoomed out)
+**Deliverable**: Professional-looking time grid that adapts to zoom
+
+### F1.4: Signal Data Structure & Models (4-6 hours)
+**What**: Define TypeScript interfaces for signals and timing data
+**Why**: Clean data models prevent bugs and enable future features
+**Tasks**:
+- Create `Signal` interface (id, name, type, transitions, color)
+- Define `TimingPoint` type (time, value, metadata)
+- Build `SignalType` enum (clock, data, control, bus)
+- Add validation functions for timing data
+**Deliverable**: Type-safe data structures with examples
+
+### F1.5: Basic Signal Rendering Engine (8-12 hours)
+**What**: Render digital signals as high/low rectangles
+**Why**: Core functionality - users must see their timing diagrams
+**Tasks**:
+- Create `SignalRenderer` component for individual signals
+- Implement high/low state drawing (rectangles with transitions)
+- Add signal-specific styling (colors, line thickness, patterns)
+- Handle edge cases (very short pulses, overlapping transitions)
+**Deliverable**: Can display 3-4 static signals with different patterns
+
+### F1.6: Y-Axis Signal Labels (4-6 hours)
+**What**: Display signal names on the left side of the canvas
+**Why**: Users need to identify which signal is which
+**Tasks**:
+- Create fixed-position label area that doesn't scroll with time
+- Align labels with signal tracks
+- Handle long signal names (truncation, tooltips)
+- Add basic signal type icons (clock symbol, data arrow, etc.)
+**Deliverable**: Clear signal identification system
+
+### F1.7: Basic Zoom Functionality (6-8 hours)
+**What**: Mouse wheel zoom in/out centered on cursor position
+**Why**: Essential for analyzing both overview and detailed timing
+**Tasks**:
+- Implement zoom state management (scale factor, center point)
+- Add mouse wheel event handler with zoom constraints
+- Update time grid and signal rendering on zoom changes
+- Prevent zoom past minimum/maximum useful levels
+**Deliverable**: Smooth zoom that maintains cursor focus point
+
+## Backend Tasks
+
+### B1.1: Node.js Server Setup (3-4 hours)
+**What**: Basic Express.js server to serve the React app
+**Why**: Needed for development and future API endpoints
+**Tasks**:
+- Initialize Node.js project with Express and TypeScript
+- Set up development vs production configurations
+- Configure CORS for frontend-backend communication
+- Add basic error handling and logging
+**Deliverable**: Running server that serves static files
+
+### B1.2: Data Models & Validation (4-6 hours)
+**What**: Server-side TypeScript interfaces matching frontend models
+**Why**: Ensures data consistency between frontend and backend
+**Tasks**:
+- Mirror frontend `Signal` and `TimingPoint` interfaces
+- Add server-side validation using Joi or Zod
+- Create example timing diagram data for testing
+- Add data sanitization functions
+**Deliverable**: Validated data structures with test data
+
+### B1.3: Basic API Structure (4-6 hours)
+**What**: RESTful endpoints foundation for future features
+**Why**: Establishes patterns for save/load and collaboration features
+**Tasks**:
+- Create `/api/diagrams` route structure
+- Add basic CRUD endpoint skeletons (GET, POST, PUT, DELETE)
+- Implement JSON request/response handling
+- Add API versioning strategy (`/api/v1/`)
+**Deliverable**: API endpoints that return mock data
+
+### B1.4: File System Integration (3-4 hours)
+**What**: Basic file operations for saving/loading diagrams
+**Why**: Users will need to persist their work
+**Tasks**:
+- Set up secure file upload/download handling
+- Create diagram storage directory structure
+- Add file validation (size limits, format checking)
+- Implement basic file naming and organization
+**Deliverable**: Can save/load JSON files safely
+
+### B1.5: Development Tooling (2-3 hours)
+**What**: Scripts and tools for efficient development
+**Why**: Streamlines development workflow and prevents issues
+**Tasks**:
+- Add hot-reload for backend changes
+- Create database seeding scripts for test data
+- Set up concurrent frontend/backend development
+- Add basic health check endpoint
+**Deliverable**: Smooth development experience
+
+## Integration Tasks
+
+### I1.1: Frontend-Backend Connection (4-6 hours)
+**What**: Connect React app to Node.js server
+**Why**: Enables data flow between client and server
+**Tasks**:
+- Set up Axios or Fetch for API calls
+- Create React hooks for server communication
+- Add loading states and error handling
+- Test data flow with mock timing diagrams
+**Deliverable**: Frontend displays data from backend
+
+### I1.2: End-to-End Testing Setup (3-4 hours)
+**What**: Basic testing framework for the full application
+**Why**: Ensures features work together correctly
+**Tasks**:
+- Set up Jest for unit tests and Cypress for E2E
+- Create tests for canvas rendering
+- Add API endpoint testing
+- Set up CI/CD pipeline basics
+**Deliverable**: Automated testing that catches regressions
+
+## Sprint 1 Definition of Done:
+- ✅ Canvas displays time grid with configurable units
+- ✅ Shows 3-4 static digital signals with labels
+- ✅ Zoom in/out works smoothly
+- ✅ Frontend connects to backend successfully
+- ✅ Code is type-safe and tested
+- ✅ Development environment is fully functional
+
+

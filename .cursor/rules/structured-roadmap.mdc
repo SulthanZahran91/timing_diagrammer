@@ -1,0 +1,91 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+This is a reference for the entire project roadmap, whenever you add a feature please do a high-view check to consider this feature interaction with existing and future features in the roadmap
+
+Sprint 1: Foundation & Basic Canvas (1-2 weeks)
+Goal: Get a working canvas with time grid and basic signal display
+Deliverables:
+
+Set up React + TypeScript project with D3.js/Canvas
+Render time grid with configurable scale (ns, μs, cycles)
+Display static digital signals (high/low rectangles)
+Basic signal labels on Y-axis
+Simple zoom in/out functionality
+
+Success Criteria: Can display 3-4 pre-defined digital signals on a time grid
+
+Sprint 2: Signal Creation & Editing (2-3 weeks)
+Goal: Users can create and modify timing diagrams
+Deliverables:
+
+Add new signals (clock, data, control types)
+Click-to-toggle signal states (high/low/high-Z)
+Drag signal transitions horizontally
+Delete/rename signals
+Basic undo/redo functionality
+Save/load diagram data (JSON format)
+
+Success Criteria: Can create a complete timing diagram for a simple digital circuit (e.g., SPI communication)
+
+Sprint 3: Advanced Interaction & Measurements (2-3 weeks)
+Goal: Professional-grade timing analysis tools
+Deliverables:
+
+Dual cursors for timing measurements
+Pan with mouse drag, precision zoom
+Signal grouping (buses, hierarchical view)
+Time annotations and comments
+Signal value annotations (hex, binary, decimal for buses)
+Keyboard shortcuts for common operations
+
+Success Criteria: Can analyze setup/hold times and measure pulse widths accurately
+
+Sprint 4: Analysis Overlays & Validation (2-3 weeks)
+Goal: Smart analysis features that add insight
+Deliverables:
+
+Setup/hold time constraint checking with visual warnings
+Clock domain crossing detection
+Critical path highlighting between related signals
+Timing margin calculation and color-coding
+Signal dependency mapping (cause → effect arrows)
+Export analysis reports
+
+Success Criteria: Can automatically detect timing violations in a complex multi-clock design
+
+Sprint 5: Format Conversion Engine (2-3 weeks)
+Goal: Transform timing diagrams into other useful formats
+Deliverables:
+
+Convert to Gantt chart (signal durations → tasks)
+Generate UML sequence diagrams (signal interactions → messages)
+Export to industry formats (VCD, WaveJSON)
+Print-ready documentation export (PDF with annotations)
+Share/collaborate features (export links, embed codes)
+
+Success Criteria: Can generate a project timeline Gantt chart from a protocol timing diagram
+
+Sprint 6: Polish & Advanced Features (2-3 weeks)
+Goal: Production-ready application
+Deliverables:
+
+Template library (common protocols: SPI, I2C, UART, DDR)
+Advanced signal types (analog, differential pairs)
+Simulation mode (step through time automatically)
+Performance optimization for large diagrams (1000+ signals)
+User preferences and themes
+Integration hooks (APIs for external tools)
+
+Success Criteria: Can handle enterprise-scale timing diagrams with smooth performance
+
+Optional Future Sprints:
+
+Sprint 7: Mobile responsiveness and touch support
+Sprint 8: Real-time collaboration (multiple users editing)
+Sprint 9: AI-powered timing optimization suggestions
+Sprint 10: Hardware simulator integration (FPGA, oscilloscope data import)
+
+

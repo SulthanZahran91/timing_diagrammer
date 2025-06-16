@@ -1,0 +1,42 @@
+.canvasContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  user-select: none;
+}
+
+.canvas:hover {
+  cursor: crosshair;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .canvasContainer {
+    background-color: #1a1a1a;
+    border-color: #374151;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .canvasContainer {
+    border-radius: 4px;
+  }
+}
+
+/* Ensure smooth rendering */
+.canvas {
+  shape-rendering: geometricPrecision;
+} 
