@@ -183,14 +183,22 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Navigation to Signal Renderer */}
+        {/* Navigation to demos */}
         <div className="mt-8 text-center">
-          <Link 
-            href="/signals" 
-            className="inline-flex items-center px-6 py-3 text-base font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
-          >
-            View Signal Rendering Demo →
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link 
+              href="/signals" 
+              className="inline-flex items-center px-6 py-3 text-base font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
+            >
+              Signal Rendering Demo →
+            </Link>
+            <Link 
+              href="/labels" 
+              className="inline-flex items-center px-6 py-3 text-base font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800"
+            >
+              Y-Axis Labels Demo (F1.6) →
+            </Link>
+          </div>
         </div>
       </div>
     </div>

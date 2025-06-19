@@ -3,7 +3,11 @@ export { TimingCanvas } from './TimingCanvas';
 export { TimeGrid } from './TimeGrid';
 export { TimingCanvasWithGrid } from './TimingCanvasWithGrid';
 export { SignalRenderer } from './SignalRenderer';
+export { SignalLabels } from './SignalLabels';
 export { TimingDiagramDemo } from './TimingDiagramDemo';
+
+// Export SignalLabelProps interface
+export type { SignalLabelProps } from './SignalLabels';
 
 // Hooks
 export { useCanvasTransforms } from '../hooks/useCanvasTransforms';

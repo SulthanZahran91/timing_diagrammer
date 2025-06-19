@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced WaveDrom - Basic Usage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/wavedrom@^3.5.0/wavedrom.min.js"></script>
+    <style>
+        .enhanced-wavedrom-cursor {
+            animation: cursor-appear 0.3s ease-out;
+        }
+        @keyframes cursor-appear {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6">Enhanced WaveDrom Example</h1>
+        
+        <div class="bg-white p-4 mb-4 rounded border">
+            <button id="cursor-mode" class="px-4 py-2 bg-blue-600 text-white rounded mr-2">Cursor</button>
+            <button id="clear-cursors" class="px-4 py-2 bg-red-600 text-white rounded">Clear</button>
+        </div>
+
+        <div id="wavedrom-container" class="bg-white p-4 rounded border relative">
+        </div>
+
+        <div id="measurements" class="bg-white p-4 mt-4 rounded border hidden">
+            <h3 class="font-bold mb-2">Measurements</h3>
+            <div id="measurement-content"></div>
+        </div>
+    </div>
+
+    <script>
+        const waveJSON = {
+            signal: [
+                { name: "clk", wave: "p.....|..." },
+                { name: "Data", wave: "x.345x|=.x", data: ["head", "body", "tail"] },
+                { name: "Request", wave: "0.1..0|1.0" }
+            ]
+        };
+
+        class SimpleEnhancedWaveDrom {
+            constructor(container, waveJson) {
+                this.container = container;
+                this.cursors = [];
+                this.cursorColors = ['#ff0000', '#0066cc', '#00cc66', '#ffcc00'];
+                
+                const element = WaveDrom.renderWaveForm(0, waveJson, 'wavedrom');
+                this.container.appendChild(element);
+                
+                this.svg = this.container.querySelector('svg');
+                this.setupInteractivity();
+            }
+
+            setupInteractivity() {
+                this.svg.addEventListener('click', (event) => {
+                    const rect = this.svg.getBoundingClientRect();
+                    const x = event.clientX - rect.left;
+                    this.addCursor(x);
+                });
+            }
+
+            addCursor(x) {
+                if (this.cursors.length >= 4) return;
+                
+                const color = this.cursorColors[this.cursors.length];
+                const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                group.classList.add('enhanced-wavedrom-cursor');
+                
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x);
+                line.setAttribute('y1', '0');
+                line.setAttribute('x2', x);
+                line.setAttribute('y2', '100%');
+                line.setAttribute('stroke', color);
+                line.setAttribute('stroke-width', '2');
+                
+                const handle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                handle.setAttribute('cx', x);
+                handle.setAttribute('cy', '20');
+                handle.setAttribute('r', '6');
+                handle.setAttribute('fill', color);
+                
+                group.appendChild(line);
+                group.appendChild(handle);
+                this.svg.appendChild(group);
+                
+                this.cursors.push({ x, element: group });
+                this.updateMeasurements();
+            }
+
+            updateMeasurements() {
+                const display = document.getElementById('measurements');
+                const content = document.getElementById('measurement-content');
+                
+                if (this.cursors.length >= 2) {
+                    const sorted = [...this.cursors].sort((a, b) => a.x - b.x);
+                    const diff = Math.abs(sorted[1].x - sorted[0].x);
+                    const time = (diff * 0.1).toFixed(2);
+                    
+                    content.innerHTML = `Time difference: ${time} ns`;
+                    display.classList.remove('hidden');
+                } else {
+                    display.classList.add('hidden');
+                }
+            }
+
+            clearCursors() {
+                this.cursors.forEach(cursor => cursor.element.remove());
+                this.cursors = [];
+                this.updateMeasurements();
+            }
+        }
+
+        // Initialize
+        const container = document.getElementById('wavedrom-container');
+        const enhanced = new SimpleEnhancedWaveDrom(container, waveJSON);
+
+        document.getElementById('clear-cursors').addEventListener('click', () => {
+            enhanced.clearCursors();
+        });
+    </script>
+</body>
+</html> 

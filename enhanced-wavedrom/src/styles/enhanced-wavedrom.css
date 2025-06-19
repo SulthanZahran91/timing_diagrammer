@@ -1,0 +1,267 @@
+/* Enhanced WaveDrom Styles */
+
+/* Base SVG styles */
+.enhanced-wavedrom {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Interactive overlay */
+.enhanced-wavedrom-overlay {
+  pointer-events: all;
+}
+
+.interaction-capture {
+  fill: transparent;
+  pointer-events: all;
+}
+
+/* Cursor styles */
+.enhanced-wavedrom-cursor {
+  pointer-events: none;
+}
+
+.enhanced-wavedrom-cursor .cursor-handle {
+  pointer-events: all;
+  transition: all 0.2s ease;
+}
+
+.enhanced-wavedrom-cursor .cursor-handle:hover {
+  r: 8;
+  stroke-width: 3;
+}
+
+.enhanced-wavedrom-cursor.dragging .cursor-handle {
+  r: 8;
+  stroke-width: 3;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.enhanced-wavedrom-cursor .cursor-line {
+  transition: stroke-width 0.2s ease;
+}
+
+.enhanced-wavedrom-cursor:hover .cursor-line {
+  stroke-width: 3;
+}
+
+.enhanced-wavedrom-cursor.snapped .cursor-line {
+  stroke-dasharray: none;
+  stroke-width: 3;
+}
+
+.enhanced-wavedrom-cursor.snapped .cursor-handle {
+  stroke: #00ff00;
+  stroke-width: 3;
+}
+
+.enhanced-wavedrom-cursor .cursor-label {
+  pointer-events: none;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+  transition: font-size 0.2s ease;
+}
+
+.enhanced-wavedrom-cursor:hover .cursor-label {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+/* Cursor colors */
+.enhanced-wavedrom-cursor[data-color="red"] .cursor-line,
+.enhanced-wavedrom-cursor[data-color="red"] .cursor-handle {
+  stroke: #ff0000;
+  fill: #ff0000;
+}
+
+.enhanced-wavedrom-cursor[data-color="blue"] .cursor-line,
+.enhanced-wavedrom-cursor[data-color="blue"] .cursor-handle {
+  stroke: #0066cc;
+  fill: #0066cc;
+}
+
+.enhanced-wavedrom-cursor[data-color="green"] .cursor-line,
+.enhanced-wavedrom-cursor[data-color="green"] .cursor-handle {
+  stroke: #00cc66;
+  fill: #00cc66;
+}
+
+.enhanced-wavedrom-cursor[data-color="yellow"] .cursor-line,
+.enhanced-wavedrom-cursor[data-color="yellow"] .cursor-handle {
+  stroke: #ffcc00;
+  fill: #ffcc00;
+}
+
+/* Mode-specific cursor styles */
+.enhanced-wavedrom[data-mode="cursor"] .interaction-capture {
+  cursor: crosshair;
+}
+
+.enhanced-wavedrom[data-mode="measure"] .interaction-capture {
+  cursor: crosshair;
+}
+
+.enhanced-wavedrom[data-mode="zoom"] .interaction-capture {
+  cursor: zoom-in;
+}
+
+.enhanced-wavedrom[data-mode="pan"] .interaction-capture {
+  cursor: grab;
+}
+
+.enhanced-wavedrom[data-mode="pan"] .interaction-capture:active {
+  cursor: grabbing;
+}
+
+/* Animation keyframes */
+@keyframes cursor-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes cursor-snap {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes measurement-update {
+  0% {
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* Cursor animations */
+.enhanced-wavedrom-cursor {
+  animation: cursor-appear 0.3s ease-out;
+}
+
+.enhanced-wavedrom-cursor.snapped {
+  animation: cursor-snap 0.2s ease-out;
+}
+
+/* Measurement display animations */
+.measurement-display {
+  animation: measurement-update 0.5s ease-out;
+}
+
+/* Loading state */
+.enhanced-wavedrom.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.enhanced-wavedrom.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  margin: -16px 0 0 -16px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error state */
+.enhanced-wavedrom.error {
+  border: 2px solid #ef4444;
+  background-color: #fef2f2;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .enhanced-wavedrom-cursor .cursor-handle {
+    r: 8;
+  }
+  
+  .enhanced-wavedrom-cursor .cursor-label {
+    font-size: 11px;
+  }
+  
+  .measurement-display {
+    min-width: 200px;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .enhanced-wavedrom-cursor .cursor-handle {
+    r: 10;
+  }
+  
+  .measurement-display {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    top: auto;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .enhanced-wavedrom-cursor .cursor-line {
+    stroke-width: 3;
+  }
+  
+  .enhanced-wavedrom-cursor .cursor-handle {
+    stroke-width: 3;
+  }
+  
+  .enhanced-wavedrom-cursor .cursor-label {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    font-weight: bold;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .enhanced-wavedrom-cursor,
+  .enhanced-wavedrom-cursor .cursor-handle,
+  .enhanced-wavedrom-cursor .cursor-line,
+  .enhanced-wavedrom-cursor .cursor-label {
+    animation: none;
+    transition: none;
+  }
+  
+  .enhanced-wavedrom.loading::after {
+    animation: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .enhanced-wavedrom-overlay {
+    display: none;
+  }
+  
+  .measurement-display {
+    position: static;
+    break-inside: avoid;
+    margin-top: 1rem;
+  }
+} 

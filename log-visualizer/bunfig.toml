@@ -1,0 +1,9 @@
+[test]
+# Use happy-dom environment for React component testing (better performance with Bun)
+environment = "happy-dom"
+
+# Preload setup files
+preload = ["./test-setup.ts"]
+
+# Test file patterns
+include = ["**/*.test.{ts,tsx,js,jsx}", "**/__tests__/**/*.{ts,tsx,js,jsx}"] 
