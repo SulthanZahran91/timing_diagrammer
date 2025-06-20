@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   Container,
   Typography,
@@ -12,50 +12,54 @@ import {
   Skeleton,
 } from '@mui/material';
 import CsvUploader from '../components/CsvUploader/CsvUploader';
-import { TimingDiagram } from '../components/TimingDiagram';
+import { TimingDiagramWithNavigation } from '../components/TimingDiagramWithNavigation/TimingDiagramWithNavigation';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
   loadCsvData,
   clearData,
   setError,
 } from '../store/slices/signalDataSlice';
-import { WaveDromConverterService } from '../services/waveDromConverter/waveDromConverter';
+import { resetViewConfig, setViewportTimeRange } from '../store/slices/viewConfigSlice';
 import { SignalEvent } from '../types/store';
-import { WaveDromDiagram } from '../components/TimingDiagram/TimingDiagram.types';
-import { DEFAULT_CONVERSION_CONFIG } from '../services/waveDromConverter/waveDromConverter.types';
 import { ClientOnly } from '../components/ClientOnly';
-
-const converter = new WaveDromConverterService();
 
 export default function Home() {
   const dispatch = useAppDispatch();
-  const { events, error } = useAppSelector(state => state.signalData);
+  const { events, error, timeRange } = useAppSelector(state => state.signalData);
+  const { viewportTimeRange } = useAppSelector(state => state.viewConfig);
 
-  const [diagram, setDiagram] = useState<WaveDromDiagram | null>(null);
+  console.log('🏠 Home render - events count:', events.length);
+  console.log('🏠 Home render - timeRange:', timeRange);
+  console.log('🏠 Home render - viewportTimeRange:', viewportTimeRange);
+  console.log('🏠 Home render - error:', error);
+
+  // Initialize viewport when timeRange is available but viewport is not set
+  useEffect(() => {
+    console.log('🚀 Home effect - checking viewport initialization');
+    console.log('  - timeRange:', timeRange);
+    console.log('  - viewportTimeRange:', viewportTimeRange);
+    
+    if (timeRange && !viewportTimeRange) {
+      console.log('✅ Initializing viewport time range from main page:', timeRange);
+      dispatch(setViewportTimeRange(timeRange));
+    }
+  }, [timeRange, viewportTimeRange, dispatch]);
 
   const handleFileUpload = (uploadedEvents: SignalEvent[]) => {
+    console.log('📁 File uploaded - events count:', uploadedEvents.length);
+    console.log('📁 File uploaded - first few events:', uploadedEvents.slice(0, 3));
     dispatch(loadCsvData(uploadedEvents));
-    if (uploadedEvents.length > 0) {
-      const initialTimeRange = {
-        startTime: Math.min(...uploadedEvents.map(e => e.timestamp)),
-        endTime: Math.max(...uploadedEvents.map(e => e.timestamp)),
-      };
-      const result = converter.convertToWaveDrom(
-        uploadedEvents,
-        initialTimeRange,
-        DEFAULT_CONVERSION_CONFIG
-      );
-      setDiagram(result.diagram);
-    }
   };
 
   const handleUploadError = (uploadError: Error) => {
+    console.log('❌ Upload error:', uploadError.message);
     dispatch(setError(uploadError.message));
   };
 
   const handleClear = () => {
+    console.log('🧹 Clearing data');
     dispatch(clearData());
-    setDiagram(null);
+    dispatch(resetViewConfig());
   };
 
   return (
@@ -65,7 +69,7 @@ export default function Home() {
           CSV to WaveDrom Timing Diagram Converter
         </Typography>
         <Typography variant="h6" color="text.secondary" gutterBottom>
-          Upload a CSV file to visualize the timing diagram.
+          Upload a CSV file to visualize the timing diagram with interactive navigation.
         </Typography>
       </Box>
 
@@ -103,26 +107,26 @@ export default function Home() {
             }}
           >
             <Typography variant="h5" gutterBottom>
-              Timing Diagram
+              Interactive Timing Diagram
             </Typography>
             <Button variant="outlined" color="secondary" onClick={handleClear}>
               Upload New File
             </Button>
           </Box>
-          {diagram && (
-            <ClientOnly
-              fallback={
+          
+          <ClientOnly
+            fallback={
+              <Box>
                 <Skeleton variant="rectangular" width={1100} height={400} />
-              }
-            >
-              <TimingDiagram
-                diagram={diagram}
-                width={1100}
-                height={400}
-                onError={err => dispatch(setError(err.message))}
-              />
-            </ClientOnly>
-          )}
+                <Skeleton variant="rectangular" width={1100} height={60} sx={{ mt: 2 }} />
+              </Box>
+            }
+          >
+            <TimingDiagramWithNavigation
+              diagramWidth={1100}
+              diagramHeight={400}
+            />
+          </ClientOnly>
         </Paper>
       )}
     </Container>

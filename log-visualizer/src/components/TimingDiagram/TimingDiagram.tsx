@@ -3,6 +3,8 @@ import React, {
   useRef,
   useImperativeHandle,
   forwardRef,
+  useState,
+  useMemo,
 } from 'react';
 import { Box, Alert } from '@mui/material';
 import { TimingDiagramProps, TimingDiagramRef } from './TimingDiagram.types';
@@ -19,7 +21,15 @@ declare global {
 export const TimingDiagram = forwardRef<TimingDiagramRef, TimingDiagramProps>(
   ({ diagram, width = 800, height = 400, className, onError }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const [error, setError] = React.useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [isRendering, setIsRendering] = useState(false);
+    const lastDiagramRef = useRef<string>('');
+    const renderTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Memoize diagram serialization to avoid unnecessary re-renders
+    const diagramKey = useMemo(() => {
+      return JSON.stringify(diagram);
+    }, [diagram]);
 
     useImperativeHandle(ref, () => ({
       getDiagramElement: () =>
@@ -53,39 +63,77 @@ export const TimingDiagram = forwardRef<TimingDiagramRef, TimingDiagramProps>(
         return;
       }
 
-      let isCancelled = false;
+      // Skip rendering if diagram hasn't actually changed
+      if (diagramKey === lastDiagramRef.current) {
+        console.log('📊 Skipping TimingDiagram render - diagram unchanged');
+        return;
+      }
 
-      const renderDiagram = () => {
+      // Clear any pending render
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
+
+      let isCancelled = false;
+      setIsRendering(true);
+
+      const renderDiagram = async () => {
         try {
           if (isCancelled || !container) {
             return;
           }
 
+          console.log('🎨 Rendering TimingDiagram with', diagram.signal?.length, 'signals');
+
+          // Clear container content safely by setting innerHTML
           container.innerHTML = '';
           setError(null);
 
           const script = document.createElement('script');
           script.type = 'WaveDrom';
-          script.innerHTML = JSON.stringify(diagram, null, 2);
+          script.innerHTML = diagramKey;
           container.appendChild(script);
 
-          window.WaveDrom.ProcessAll();
+          // Use requestAnimationFrame for better performance
+          await new Promise<void>((resolve) => {
+            requestAnimationFrame(() => {
+              if (isCancelled) {
+                resolve();
+                return;
+              }
 
-          // The rendering is asynchronous, so we need to check for the SVG after a delay
-          setTimeout(() => {
+              try {
+                window.WaveDrom.ProcessAll();
+                resolve();
+              } catch (processError) {
+                console.error('WaveDrom ProcessAll error:', processError);
+                resolve();
+              }
+            });
+          });
+
+          // Check for SVG with a reasonable timeout
+          renderTimeoutRef.current = setTimeout(() => {
             if (isCancelled) return;
+            
             const svgElement = container.querySelector('svg');
             if (svgElement) {
               svgElement.setAttribute('width', width.toString());
               svgElement.setAttribute('height', height.toString());
               svgElement.style.maxWidth = '100%';
               svgElement.style.height = 'auto';
+              
+              console.log('✅ TimingDiagram rendered successfully');
+              lastDiagramRef.current = diagramKey;
             } else {
               setError(
                 'WaveDrom processed, but no SVG was found. Check the diagram data for errors.'
               );
+              console.error('❌ No SVG found after WaveDrom processing');
             }
-          }, 100);
+            setIsRendering(false);
+          }, 100); // Increased timeout for more reliable rendering
+          
         } catch (err) {
           if (isCancelled) {
             return;
@@ -97,15 +145,23 @@ export const TimingDiagram = forwardRef<TimingDiagramRef, TimingDiagramProps>(
           setError(errorMessage);
           onError?.(err instanceof Error ? err : new Error(errorMessage));
           console.error('Timing diagram rendering error:', err);
+          setIsRendering(false);
         }
       };
 
-      Promise.resolve().then(renderDiagram);
+      // Use a small delay to batch rapid changes
+      renderTimeoutRef.current = setTimeout(() => {
+        renderDiagram();
+      }, 10);
 
       return () => {
         isCancelled = true;
+        setIsRendering(false);
+        if (renderTimeoutRef.current) {
+          clearTimeout(renderTimeoutRef.current);
+        }
       };
-    }, [diagram, width, height, onError]);
+    }, [diagramKey, width, height, onError]);
 
     if (error) {
       return (
@@ -125,9 +181,17 @@ export const TimingDiagram = forwardRef<TimingDiagramRef, TimingDiagramProps>(
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          opacity: isRendering ? 0.7 : 1,
+          transition: 'opacity 0.2s ease',
         }}
         data-testid="timing-diagram-container"
-      />
+      >
+        {isRendering && (
+          <Box sx={{ position: 'absolute', color: 'text.secondary' }}>
+            Rendering diagram...
+          </Box>
+        )}
+      </Box>
     );
   }
 );

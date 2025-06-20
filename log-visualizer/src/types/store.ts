@@ -22,7 +22,7 @@ export interface TimeRange {
 export interface SignalDataState {
   events: SignalEvent[];
   timelines: SignalTimeline[];
-  timeRange: TimeRange | null;
+  timeRange: TimeRange | null; // Full data time range
   visibleSignals: Set<string>;
   signalOrder: string[];
   loading: boolean;
@@ -33,6 +33,7 @@ export interface ViewConfigState {
   resolution: number;
   zoomLevel: number;
   skin: 'default' | 'narrow' | 'lowkey';
+  viewportTimeRange: TimeRange | null; // Current visible time range in main diagram
 }
 
 export interface UIState {
@@ -62,6 +63,6 @@ export enum ErrorType {
 export interface AppError {
   type: ErrorType;
   message: string;
-  details?: any;
+  details?: unknown;
   recoverable: boolean;
 }

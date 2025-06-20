@@ -18,6 +18,7 @@ const initialState: SignalDataState = {
 
 // Utility function to generate timelines from events
 const generateTimelines = (events: SignalEvent[]): SignalTimeline[] => {
+  console.log('🔨 generateTimelines called with', events.length, 'events');
   const timelineMap = new Map<string, SignalTimeline>();
 
   events.forEach(event => {
@@ -38,18 +39,27 @@ const generateTimelines = (events: SignalEvent[]): SignalTimeline[] => {
     timeline.events.sort((a, b) => a.timestamp - b.timestamp);
   });
 
-  return Array.from(timelineMap.values());
+  const timelines = Array.from(timelineMap.values());
+  console.log('✅ Generated', timelines.length, 'timelines:', timelines.map(t => t.signalName));
+  return timelines;
 };
 
 // Utility function to calculate default time range
 const calculateTimeRange = (events: SignalEvent[]): TimeRange | null => {
-  if (events.length === 0) return null;
+  console.log('⏰ calculateTimeRange called with', events.length, 'events');
+  if (events.length === 0) {
+    console.log('⚠️ No events, returning null time range');
+    return null;
+  }
 
   const timestamps = events.map(e => e.timestamp);
-  return {
+  const timeRange = {
     startTime: Math.min(...timestamps),
     endTime: Math.max(...timestamps),
   };
+  
+  console.log('✅ Calculated time range:', timeRange);
+  return timeRange;
 };
 
 const signalDataSlice = createSlice({
@@ -57,6 +67,8 @@ const signalDataSlice = createSlice({
   initialState,
   reducers: {
     loadCsvData: (state, action: PayloadAction<SignalEvent[]>) => {
+      console.log('📥 loadCsvData reducer called with', action.payload.length, 'events');
+      
       state.events = action.payload;
       state.timelines = generateTimelines(action.payload);
       state.timeRange = calculateTimeRange(action.payload);
@@ -65,14 +77,23 @@ const signalDataSlice = createSlice({
       const uniqueSignals = Array.from(
         new Set(action.payload.map(e => e.signalName))
       ).sort();
+      
+      console.log('🎯 Unique signals found:', uniqueSignals);
+      
       state.visibleSignals = new Set(uniqueSignals);
       state.signalOrder = uniqueSignals;
 
       state.loading = false;
       state.error = null;
+      
+      console.log('✅ loadCsvData complete - state updated:');
+      console.log('  - events:', state.events.length);
+      console.log('  - timeRange:', state.timeRange);
+      console.log('  - signals:', uniqueSignals);
     },
 
     updateTimeRange: (state, action: PayloadAction<TimeRange>) => {
+      console.log('🔄 updateTimeRange called:', action.payload);
       state.timeRange = action.payload;
     },
 
@@ -94,11 +115,13 @@ const signalDataSlice = createSlice({
     },
 
     setError: (state, action: PayloadAction<string | null>) => {
+      console.log('❌ setError called:', action.payload);
       state.error = action.payload;
       state.loading = false;
     },
 
     clearData: state => {
+      console.log('🧹 clearData called');
       state.events = [];
       state.timelines = [];
       state.timeRange = null;

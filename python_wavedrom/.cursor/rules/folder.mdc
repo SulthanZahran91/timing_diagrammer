@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Python folder is for our code, wavedrom folder is reference javascript folder. We're going to migrate a library from javascript to python.
+
+I'm using powershell so please make sure your console command are powershell windows 10 friendly. The venv is setup by uv using 'uv venv' command
